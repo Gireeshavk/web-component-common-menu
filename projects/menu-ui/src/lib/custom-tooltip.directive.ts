@@ -42,8 +42,8 @@ export class CustomTooltipDirective implements OnDestroy {
       this.renderer.setStyle(this.tooltipElement, 'padding', '8px 12px');
       this.renderer.setStyle(this.tooltipElement, 'border-radius', '6px');
       this.renderer.setStyle(this.tooltipElement, 'font-size', '14px');
-      this.renderer.setStyle(this.tooltipElement, 'min-width', '140px');
-      this.renderer.setStyle(this.tooltipElement, 'max-width', '280px');
+      this.renderer.setStyle(this.tooltipElement, 'min-width', '120px');
+      this.renderer.setStyle(this.tooltipElement, 'max-width', '250px');
       this.renderer.setStyle(this.tooltipElement, 'word-wrap', 'break-word');
       this.renderer.setStyle(this.tooltipElement, 'z-index', '1000');
       this.renderer.setStyle(this.tooltipElement, 'box-shadow', '0 4px 12px rgba(0, 0, 0, 0.15)');

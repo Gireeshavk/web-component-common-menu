@@ -30,21 +30,13 @@ export class MenuUi implements OnInit {
   skeletonItems = Array.from({ length: 10 });
   isLoading: boolean = true;
   isExpanded: boolean = false; // Track expanded/collapsed state
-    @Output() menuToggle = new EventEmitter<boolean>();
-  @Output() expandedChange = new EventEmitter<boolean>();
   
   ngOnInit(): void {
     this.fetchMenuData();
-    // Emit initial state
-    this.menuToggle.emit(this.isExpanded);
-    this.expandedChange.emit(this.isExpanded);
   }
-
-  // Toggle menu expand/collapse
-  toggleMenu() {
+  
+  toggleMenu(): void {
     this.isExpanded = !this.isExpanded;
-    this.menuToggle.emit(this.isExpanded);
-    this.expandedChange.emit(this.isExpanded);
   }
 
   // Check if text is truncated and should show tooltip
@@ -228,8 +220,7 @@ export class MenuUi implements OnInit {
       return false;
     }
   }
-  // Track by function for performance
-  trackByFn(index: number, ): any {
-    return index ;
+  trackByFn(item: MenuItem): number {
+    return item.sWAFunctionalityID;
   }
 }

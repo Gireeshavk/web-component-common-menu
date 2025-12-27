@@ -1,175 +1,141 @@
-// ...existing code...
-
 .menu-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f4f7fb;
   width: 80px;
-  min-height: 100vh;
-  background-color: #f8f9fa;
-  padding: 16px;
-  transition: width 0.3s ease;
+  min-height: 95vh;
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 
   &.expanded {
-    width: 230px;
-    background-color: #ffff;
-
+    width: 220px;
+    align-items: flex-start;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
 .menu-item-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  height: 48px;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  
+  .menu-container.expanded & {
+    justify-content: flex-start;
+  }
 }
 
-// Fixed Icon Section - Always stays in same position
-.icon-section {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 48px;
-  height: 48px;
-  z-index: 10;
-}
-
-.icon-btn {
-  width: 48px;
-  height: 48px;
+.menu-item-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-
-  .iconify {
-    font-size: 24px;
-    color: #212529;
-    transition: color 0.3s ease;
-  }
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.5rem;
+  position: relative;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    transform: scale(1.05);
+    background-color: #f5e1e0;
+    color: color-mix(in srgb, var(--bg-primary) 90%, black 5%);
+    border-radius: 15px;
   }
 
   &.active {
-    background-color: #d41e12;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-
+    background-color: var(--bg-primary, rgb(216, 53, 45));
+    color: #fff;
+    border-radius: 10px;    
+    // Add a subtle glow effect
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 17px;
+      background: linear-gradient(45deg, rgb(204, 79, 72), rgba(13, 110, 253, 0.1));
+      z-index: -1;
+      animation: pulse 2s infinite;
+    }
+    
     .iconify {
-      color: white;
+      color: #fff;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     }
   }
-}
 
-// Label Section - Slides in smoothly
-.label-section {
-  position: absolute;
-  left: 48px;
-  top: 0;
-  height: 48px;
-  width: calc(100% - 48px);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateX(-20px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &.visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(0);
+  .iconify {
+    font-size: 25px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    width: 25px;
+    height: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
-}
 
-.label-btn {
-  width: 100%;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0 12px;
-  margin-left: 8px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  // Expanded button styles
+  &.expanded {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.75rem;
+    max-width: 200px;
+    
+    .iconify {
+      margin-right: 12px;
+    }
+  }
 
   .menu-label {
+    margin-left: 12px;
     font-size: 14px;
     font-weight: 500;
-    color: var(--bs-dark, #212529);
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 140px;
-    text-align: left;
-    transition: color 0.3s ease;
-  }
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    max-width: 140px; 
+    
+    &.truncated {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    transform: translateX(4px);
-  }
-
-  &.active {
-    background-color: #d41e12;
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
-
-    .menu-label {
-      color: white;
+    &.show {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
     }
   }
 }
 
-// Toggle button styling
-.menu-item-btn {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  border-radius: 8px;
-  // margin-bottom: 16px;
-  transition: all 0.3s ease;
-
-  .iconify {
-    font-size: 24px;
-    color: var(--bs-dark, #212529);
-  }
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    transform: scale(1.05);
-  }
-}
-
-// Shimmer effects
+// Shimmer loading effect
 .shimmer-wrapper {
-  margin-bottom: 8px;
-  height: 48px;
+  margin-bottom: 0.5rem;
   display: flex;
+  justify-content: center;
   align-items: center;
 }
 
 .shimmer-item {
   width: 48px;
   height: 48px;
+  border-radius: 4px;
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 8px;
+  animation: shimmer 2s infinite;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
 
   &.expanded {
     width: 180px;
@@ -180,17 +146,44 @@
   0% {
     background-position: -200% 0;
   }
-
   100% {
     background-position: 200% 0;
   }
 }
 
-// Utility classes
-.truncated {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+// Enhanced shimmer effect with subtle glow
+.shimmer-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer-glow 1.5s infinite;
 }
 
-// ...existing code...
+@keyframes shimmer-glow {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}

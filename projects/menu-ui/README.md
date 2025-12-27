@@ -18,7 +18,9 @@ Make sure your project has the following peer dependencies installed:
 - `@angular/core` ^20.3.0
 - `@angular/common` ^20.3.0
 
-
+You may also need:
+- `@angular/cdk` ^20.2.3
+- `ngx-toastr` ^19.0.0
 
 ## Usage
 
@@ -60,7 +62,7 @@ Make sure your project has the following peer dependencies installed:
 3. **Use in Template**
 
    ```html
-   <lib-menu-ui ></lib-menu-ui>
+   <lib-menu-ui></lib-menu-ui>
    ```
 
 ## Building the Library (for contributors)
