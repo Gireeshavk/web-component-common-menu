@@ -1,0 +1,21 @@
+{
+  "name": "@swiftant-it/web-component-common-menu",
+  "version": "0.0.11",
+  "description": "Angular menu component library",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Swiftant-it/web-component-common-menu.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@angular/common": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/cdk": "^20.2.3"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

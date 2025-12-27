@@ -6,6 +6,11 @@
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
+    "paths": {
+      "menu-ui": [
+        "./dist/menu-ui"
+      ]
+    },
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
@@ -22,5 +27,19 @@
     "typeCheckHostBindings": true,
     "strictTemplates": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./projects/menu-ui/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/menu-ui/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/test-app/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/test-app/tsconfig.spec.json"
+    }
+  ]
 }

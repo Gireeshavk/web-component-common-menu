@@ -1,0 +1,39 @@
+<nav class="menu-container" [class.expanded]="isExpanded">
+  <!-- Collapse button -->
+  <div [hidden]="isLoading">
+    <button type="button" class="menu-item-btn" (click)="toggleMenu()" customTooltip="Toggle Menu">
+      <span class="iconify" [attr.data-icon]="isExpanded ? 'solar:alt-arrow-left-line-duotone' : 'solar:hamburger-menu-line-duotone'"></span>
+    </button>
+  </div>
+  
+  <!-- Shimmer loader -->
+  <ng-container *ngIf="isLoading; else menuTemplate">
+    <div *ngFor="let i of skeletonItems" class="shimmer-wrapper">
+      <div class="shimmer-item" [class.expanded]="isExpanded"></div>
+    </div>
+  </ng-container>
+
+  <!-- Real menu items -->
+  <ng-template #menuTemplate>
+    @for(item of menuItems; track trackByFn(item)) {
+      <div class="menu-item-wrapper">
+        <button 
+          type="button" 
+          class="menu-item-btn" 
+          [class.active]="isActiveRoute(item.url)" 
+          [class.expanded]="isExpanded"
+          (click)="handleNavigation(item)"
+          (keydown.enter)="handleNavigation(item)" 
+          [customTooltip]="getTooltipText(item)"
+          [attr.aria-label]="item.functionalityName">
+          <span class="iconify" [attr.data-icon]="item.iconClass"></span>
+          <span 
+            class="menu-label truncated" 
+            [class.show]="isExpanded" 
+            *ngIf="isExpanded"
+            >{{ item.functionalityName }}</span>
+        </button>
+      </div>
+    }
+  </ng-template>
+</nav>

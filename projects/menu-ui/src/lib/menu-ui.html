@@ -1,0 +1,55 @@
+<nav class="menu-container" [class.expanded]="isExpanded">
+  <!-- Toggle button -->
+  <div [hidden]="isLoading">
+    <button 
+      type="button" 
+      class="menu-item-btn" 
+      (click)="toggleMenu()" 
+      customTooltip="Toggle Menu"
+      [attr.aria-label]="isExpanded ? 'Collapse Menu' : 'Expand Menu'">
+      <span class="iconify" 
+            [attr.data-icon]="isExpanded ? 'solar:alt-arrow-left-line-duotone' : 'solar:hamburger-menu-line-duotone'">
+      </span>
+    </button>
+  </div>
+  
+  <!-- Shimmer loader -->
+  <ng-container *ngIf="isLoading; else menuTemplate">
+    <div *ngFor="let i of skeletonItems; trackBy: trackByFn" class="shimmer-wrapper">
+      <div class="shimmer-item" [class.expanded]="isExpanded"></div>
+    </div>
+  </ng-container>
+
+  <!-- Real menu items -->
+  <ng-template #menuTemplate>
+    <div *ngFor="let item of menuItems; trackBy: trackByFn" class="menu-item-wrapper">
+      <!-- Fixed Icon Section -->
+      <div class="icon-section">
+        <button 
+          type="button" 
+          class="icon-btn" 
+          [class.active]="isActiveRoute(item.url)" 
+          (click)="handleNavigation(item)"
+          (keydown.enter)="handleNavigation(item)" 
+          [customTooltip]="!isExpanded ? item.functionalityName : ''"
+          [attr.aria-label]="item.functionalityName">
+          <span class="iconify" [attr.data-icon]="item.iconClass"></span>
+        </button>
+      </div>
+      
+      <!-- Expandable Label Section -->
+      <div class="label-section" [class.visible]="isExpanded">
+        <button 
+          type="button" 
+          class="label-btn" 
+          [class.active]="isActiveRoute(item.url)"
+          (click)="handleNavigation(item)"
+          (keydown.enter)="handleNavigation(item)" 
+          [customTooltip]="isExpanded && shouldShowTooltip(item.functionalityName) ? item.functionalityName : ''"
+          [attr.aria-label]="item.functionalityName">
+          <span class="menu-label">{{ item.functionalityName }}</span>
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</nav>
