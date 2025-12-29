@@ -9,6 +9,9 @@
     "paths": {
       "menu-ui": [
         "./dist/menu-ui"
+      ],
+      "ui-header-lib": [
+        "./dist/ui-header-lib"
       ]
     },
     "noImplicitReturns": true,
@@ -40,6 +43,12 @@
     },
     {
       "path": "./projects/test-app/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/ui-header-lib/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/ui-header-lib/tsconfig.spec.json"
     }
   ]
 }

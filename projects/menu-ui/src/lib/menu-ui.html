@@ -1,12 +1,20 @@
 <nav class="menu-container" [class.expanded]="isExpanded">
-  <!-- Collapse button -->
-  <div [hidden]="isLoading">
-    <button type="button" class="menu-item-btn" (click)="toggleMenu()" customTooltip="Toggle Menu">
+  <!-- Header Section with Toggle and Logo -->
+  <div class="menu-header">
+    <!-- Collapse button -->
+    <button type="button" class="menu-toggle-btn" (click)="toggleMenu()" [hidden]="isLoading">
       <span class="iconify" [attr.data-icon]="isExpanded ? 'solar:alt-arrow-left-line-duotone' : 'solar:hamburger-menu-line-duotone'"></span>
     </button>
+    
+    <!-- Logo Section -->
+    <div class="logo-section" *ngIf="(logoData || logoUrl) && !isLoading && isExpanded">
+      <img [src]="logoData || logoUrl" [alt]="logoText || 'Logo'" class="">
+      <span class="logo-text" *ngIf="logoText">{{ logoText }}</span>
+    </div>
   </div>
   
   <!-- Shimmer loader -->
+<div class="menu-content">
   <ng-container *ngIf="isLoading; else menuTemplate">
     <div *ngFor="let i of skeletonItems" class="shimmer-wrapper">
       <div class="shimmer-item" [class.expanded]="isExpanded"></div>
@@ -23,17 +31,21 @@
           [class.active]="isActiveRoute(item.url)" 
           [class.expanded]="isExpanded"
           (click)="handleNavigation(item)"
-          (keydown.enter)="handleNavigation(item)" 
-          [customTooltip]="getTooltipText(item)"
+          (keydown.enter)="handleNavigation(item)"
+          [customTooltip]="!isExpanded ? item.functionalityName : ''"
           [attr.aria-label]="item.functionalityName">
           <span class="iconify" [attr.data-icon]="item.iconClass"></span>
           <span 
-            class="menu-label truncated" 
-            [class.show]="isExpanded" 
+            #menuLabel
+            class="menu-label" 
+            [class.show]="isExpanded"
+            [class.truncated]="menuLabel.scrollWidth > menuLabel.clientWidth"
+            [customTooltip]="menuLabel.scrollWidth > menuLabel.clientWidth ? item.functionalityName : ''"
             *ngIf="isExpanded"
             >{{ item.functionalityName }}</span>
         </button>
       </div>
     }
   </ng-template>
+  </div>
 </nav>

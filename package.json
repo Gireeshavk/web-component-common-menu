@@ -1,11 +1,15 @@
 {
   "name": "menu-workspace",
-  "version": "0.0.0",
+  "version": "0.0.12",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:menu-ui": "ng build menu-ui",
+    "build:ui-header-lib": "ng build ui-header-lib",
     "watch": "ng build --watch --configuration development",
+    "watch:menu-ui": "ng build menu-ui --watch",
+    "watch:ui-header-lib": "ng build ui-header-lib --watch",
     "test": "ng test",
     "serve:ssr:test-app": "node dist/test-app/server/server.mjs"
   },
@@ -21,7 +25,6 @@
       }
     ]
   },
-  "private": true,
   "dependencies": {
     "@angular/cdk": "^20.2.3",
     "@angular/common": "^20.2.0",

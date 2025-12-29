@@ -28,6 +28,32 @@
           }
         }
       }
+    },
+    "ui-header-lib": {
+      "projectType": "library",
+      "root": "projects/ui-header-lib",
+      "sourceRoot": "projects/ui-header-lib/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ui-header-lib/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ui-header-lib/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:karma",
+          "options": {
+            "tsConfig": "projects/ui-header-lib/tsconfig.spec.json"
+          }
+        }
+      }
     }
   }
 }

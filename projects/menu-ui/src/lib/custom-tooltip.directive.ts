@@ -42,15 +42,15 @@ export class CustomTooltipDirective implements OnDestroy {
       this.renderer.setStyle(this.tooltipElement, 'padding', '8px 12px');
       this.renderer.setStyle(this.tooltipElement, 'border-radius', '6px');
       this.renderer.setStyle(this.tooltipElement, 'font-size', '14px');
-      this.renderer.setStyle(this.tooltipElement, 'min-width', '120px');
-      this.renderer.setStyle(this.tooltipElement, 'max-width', '250px');
+      this.renderer.setStyle(this.tooltipElement, 'min-width', '130px');
+      this.renderer.setStyle(this.tooltipElement, 'max-width', '400px');
       this.renderer.setStyle(this.tooltipElement, 'word-wrap', 'break-word');
       this.renderer.setStyle(this.tooltipElement, 'z-index', '1000');
       this.renderer.setStyle(this.tooltipElement, 'box-shadow', '0 4px 12px rgba(0, 0, 0, 0.15)');
       this.renderer.setStyle(this.tooltipElement, 'border', '1px solid #e0e0e0');
       this.renderer.setStyle(this.tooltipElement, 'pointer-events', 'none');
       this.renderer.setStyle(this.tooltipElement, 'font-weight', '500');
-      this.renderer.setStyle(this.tooltipElement, 'white-space', 'nowrap');
+      this.renderer.setStyle(this.tooltipElement, 'white-space', 'normal');
       
       // Add a subtle arrow pointing to the element
       const arrow = this.renderer.createElement('div');

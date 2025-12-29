@@ -26,17 +26,29 @@ export class MenuUi implements OnInit {
   @Input() params: Record<string, string | number | boolean | null> = {};
   @Input() token: string = '';
   @Input() basePaths: string[] = [];
+  @Input() themeApiUrl: string = '';       // API endpoint for theme
+  @Input() logoUrl: string = '';            // Optional: direct logo URL
+  @Input() logoText: string = '';           // Optional: text to display with logo
   menuItems: MenuItem[] = [];
+  themeData: any;
+  logoData: string = '';                    // Logo from themeData API
   skeletonItems = Array.from({ length: 10 });
   isLoading: boolean = true;
   isExpanded: boolean = false; // Track expanded/collapsed state
-  
+  @Output() menuToggle = new EventEmitter<boolean>();
+  @Output() expandedChange = new EventEmitter<boolean>();
   ngOnInit(): void {
     this.fetchMenuData();
+    this.fetchthemeData();
   }
   
+ 
   toggleMenu(): void {
     this.isExpanded = !this.isExpanded;
+    // Emit the state changes
+    this.menuToggle.emit(this.isExpanded);
+    this.expandedChange.emit(this.isExpanded);
+    console.log('Menu toggled:', this.isExpanded); // Add this log
   }
 
   // Check if text is truncated and should show tooltip
@@ -74,32 +86,101 @@ export class MenuUi implements OnInit {
       }
     });
   }
-  handleNavigation(item: MenuItem): void {
+    fetchthemeData() {
+    if (!this.themeApiUrl) {
+      return; // Skip if no theme API URL provided
+    }
+    this.apiService.post<any>(this.baseUrl, this.themeApiUrl, this.params, this.token).subscribe({
+      next: (response: any) => {
+        this.themeData = response.rObj.themeConfig;
+        // Extract logo from themeData
+        if (this.themeData?.defaultLogoByte) {
+          // If it's base64, use directly, otherwise convert
+          this.logoData = this.themeData.defaultLogoByte.startsWith('data:image') 
+            ? this.themeData.defaultLogoByte 
+            : `data:image/png;base64,${this.themeData.defaultLogoByte}`;
+        }
+        console.log("Theme data fetched:", this.themeData);
+      },
+      error: (error: any) => {
+        console.error("Error fetching theme data:", error);
+      },
+      complete: () => {
+        console.log("Theme data fetch complete.");
+      }
+    });
+  }
+  // handleNavigation(item: MenuItem): void {
+  //   let url = item.url;
+  //   if (!url || url.trim() === '' || url === '#') {
+  //     this.showUrlNotFoundPopup(item.functionalityName);
+  //     return;
+  //   };
+  //   // Absolute URL case
+  //   if (url.startsWith('http://') || url.startsWith('https://')) {
+  //     const parsed = new URL(url);
+  //     // Case 1: Same domain as current app → strip domain and navigate internally
+  //     if (parsed.origin === window.location.origin) {
+  //       url = parsed.pathname; // keep only /quotation/... or /products/...
+  //     }
+  //     // Case 2: Quotation/Products path but running on localhost → strip domain
+  //     else if ((parsed.pathname.startsWith(`/${this.basePaths}/`)) && location.hostname === 'localhost') {
+  //       url = parsed.pathname;
+  //       console.log(url);
+        
+  //     }
+  //     // Case 3: External URL → redirect fully
+  //     else {
+  //       window.location.href = url;
+  //       return;
+  //     }
+  //   }
+
+  //   // Internal Angular navigation
+  //   if (this.isValidUrl(url)) {
+  //     this.router.navigate([url]);
+  //   } else {
+  //     this.showUrlNotFoundPopup(item.functionalityName);
+  //   }
+  // }
+  handleNavigation(item: any): void {
     let url = item.url;
     if (!url || url.trim() === '' || url === '#') {
       this.showUrlNotFoundPopup(item.functionalityName);
       return;
-    };
+    }
+ 
     // Absolute URL case
     if (url.startsWith('http://') || url.startsWith('https://')) {
       const parsed = new URL(url);
-      // Case 1: Same domain as current app → strip domain and navigate internally
-      if (parsed.origin === window.location.origin) {
-        url = parsed.pathname; // keep only /quotation/... or /products/...
+      let shouldNavigateInternally = false;
+ 
+      // Check if URL matches any base path
+      for (const basePath of this.basePaths) {
+        // Case 1: Same domain, same base path → strip domain and navigate internally
+        if (parsed.origin === window.location.origin &&
+            parsed.pathname.startsWith(`/${basePath}/`)) {
+          url = parsed.pathname.replace(`/${basePath}/`, '/');
+          shouldNavigateInternally = true;
+          break;
+        }
+        // Case 2: localhost development - check if pathname starts with any base path
+        // This means the URL is pointing to the same app, just hosted elsewhere
+        else if (location.hostname === 'localhost' &&
+                 parsed.pathname.startsWith(`/${basePath}/`)) {
+          url = parsed.pathname.replace(`/${basePath}/`, '/');
+          shouldNavigateInternally = true;
+          break;
+        }
       }
-      // Case 2: Quotation/Products path but running on localhost → strip domain
-      else if ((parsed.pathname.startsWith(`/${this.basePaths}/`)) && location.hostname === 'localhost') {
-        url = parsed.pathname;
-        console.log(url);
-        
-      }
-      // Case 3: External URL → redirect fully
-      else {
+ 
+      // Case 3: Different base path or different origin → redirect externally
+      if (!shouldNavigateInternally) {
         window.location.href = url;
         return;
       }
     }
-
+ 
     // Internal Angular navigation
     if (this.isValidUrl(url)) {
       this.router.navigate([url]);
@@ -164,20 +245,37 @@ export class MenuUi implements OnInit {
     });
   }
 
-  isActiveRoute(url: any): boolean {
+isActiveRoute(url: any): boolean {
     if (!url || url.trim() === '' || url === '#') {
       return false;
     }
-
+ 
     const currentUrl = this.router.url;
     let compareUrl = url;
-
+   console.log('initall',this.basePaths);
+    console.log(compareUrl);
+   
     // Handle absolute URLs - extract the path for comparison
     if (url.startsWith('http://') || url.startsWith('https://')) {
       try {
         const parsed = new URL(url);
-        compareUrl = parsed.pathname; // This extracts /reinsurance/ from the full URL
-
+        compareUrl = parsed.pathname;
+   
+        // For both localhost and hosted: if pathname starts with /products/, strip it
+        // This normalizes URLs for comparison with Angular router URLs
+        for (const basePath of this.basePaths) {
+          if (compareUrl.startsWith(`/${basePath}/`)) {
+            compareUrl = compareUrl.replace(`/${basePath}/`, '/');
+            break;
+          }
+        }
+ 
+        // If it's an external URL (different origin and not in basePaths), it can't be active
+        const hasBasePath = this.basePaths.some(basePath => url.includes(`/${basePath}/`));
+        if (parsed.origin !== window.location.origin && !hasBasePath) {
+          return false;
+        }
+ 
         // Remove trailing slash for better comparison
         if (compareUrl.endsWith('/') && compareUrl !== '/') {
           compareUrl = compareUrl.slice(0, -1);
@@ -187,24 +285,43 @@ export class MenuUi implements OnInit {
         return false;
       }
     }
-
+ 
     // Remove trailing slash from current URL for consistent comparison
     let normalizedCurrentUrl = currentUrl;
     if (normalizedCurrentUrl.endsWith('/') && normalizedCurrentUrl !== '/') {
       normalizedCurrentUrl = normalizedCurrentUrl.slice(0, -1);
     }
-
+    // Special handling for Product Config menu item to remain active on related routes
+    if (this.basePaths.some(basePath => compareUrl.endsWith(basePath))) {
+      const relatedPaths = ['/coverage', '/claim-config', '/parameter', '/installment'];
+      if (relatedPaths.some(path => normalizedCurrentUrl.includes(path))) {
+        return true;
+      }
+    }
+ 
+    // Remove trailing slash from compareUrl
+    if (compareUrl.endsWith('/') && compareUrl !== '/') {
+      compareUrl = compareUrl.slice(0, -1);
+    }
+      console.log(normalizedCurrentUrl);
+      console.log(compareUrl);
+ 
+ 
+ 
     // Handle exact matches
     if (normalizedCurrentUrl === compareUrl) {
+      // alert('compareUrl')
+      console.log(normalizedCurrentUrl);
+     
       return true;
     }
-
+ 
     // Handle cases where current URL starts with the menu item URL
-    // This helps with nested routes like /reinsurance/dashboard matching /reinsurance
-    if (normalizedCurrentUrl.startsWith(compareUrl) && compareUrl !== '/') {
+    // This helps with nested routes like /product-config/workbench matching /product-config
+    if (normalizedCurrentUrl.startsWith(compareUrl + '/') && compareUrl !== '/') {
       return true;
     }
-
+ 
     // Angular router's isActive method as fallback with the extracted path
     try {
       const matchOptions: IsActiveMatchOptions = {
@@ -213,7 +330,6 @@ export class MenuUi implements OnInit {
         fragment: 'ignored',
         matrixParams: 'ignored'
       };
-
       return this.router.isActive(compareUrl, matchOptions);
     } catch (error) {
       console.warn('Error checking active route:', error);
